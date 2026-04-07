@@ -3,6 +3,7 @@ package com.osamafarag.moneymanger.service;
 
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.osamafarag.moneymanger.dto.ProfileDTO;
@@ -17,6 +18,7 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
 
     public ProfileDTO registerProfile(ProfileDTO profileDTO){
@@ -37,7 +39,7 @@ public class ProfileService {
                 .id(profileDTO.getId())
                 .fullName(profileDTO.getFullName())
                 .email(profileDTO.getEmail())
-                .password(profileDTO.getPassword())
+                .password(passwordEncoder.encode(profileDTO.getPassword()))
                 .profileImageUrl(profileDTO.getProfileImageUrl())
                 .createdAt(profileDTO.getCreatedAt())
                 .updatedAt(profileDTO.getUpdatedAt())
