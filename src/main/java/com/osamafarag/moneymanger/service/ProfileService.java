@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.osamafarag.moneymanger.dto.AuthDTO;
 import com.osamafarag.moneymanger.dto.ProfileDTO;
 import com.osamafarag.moneymanger.entity.ProfileEntity;
 import com.osamafarag.moneymanger.repository.ProfileRepository;
+import com.osamafarag.moneymanger.util.JwtTokenUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +29,8 @@ public class ProfileService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final AppUserDetailsService appUserDetailsService;
 
 
     public ProfileDTO registerProfile(ProfileDTO profileDTO){
@@ -106,17 +110,28 @@ public class ProfileService {
                 .build();
     }
 
-    public Map<String, Object> authenticateAndGenerateToken(AuthDTO authDTO){
+    @SuppressWarnings("UseSpecificCatch")
+    public Map<String, Object> authenticateAndGenerateToken(AuthDTO authDTO) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword()));
-            //Generate JWT Token
+            // Authenticate the user using Spring Security
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword())
+            );
+
+            // Load UserDetails for JWT generation
+            UserDetails userDetails = appUserDetailsService.loadUserByUsername(authDTO.getEmail());
+
+            // Generate JWT token
+            String token = jwtTokenUtil.generateToken(userDetails);
+
+            // Return token and user info
             return Map.of(
-                "token", "JWT token",
+                "token", token,
                 "user", getPublicProfile(authDTO.getEmail())
             );
+
         } catch (Exception e) {
             throw new RuntimeException("Invalid email or password");
         }
     }
-
 }
