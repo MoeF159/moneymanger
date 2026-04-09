@@ -3,6 +3,7 @@ package com.osamafarag.moneymanger.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     private final AppUserDetailsService appUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+    @Value("${MONEY_MANAGER_FRONTEND_URL}")
+    private String frontendUrl;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -50,17 +54,36 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type","Accept"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+    // Defines a CORS configuration bean that will be picked up by Spring Security
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    // Create a new CORS configuration object
+    CorsConfiguration configuration = new CorsConfiguration();
+
+    // Allow requests only from the specified frontend URL (injected via @Value)
+    // Example:
+    // - http://localhost:5173 (development)
+    // - https://your-frontend.com (production)
+    configuration.setAllowedOrigins(List.of("http://localhost:5173", frontendUrl));
+
+    // Specify which HTTP methods are allowed when making cross-origin requests
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+    // Specify which headers can be included in the request
+    // "Authorization" is required for JWT tokens
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+
+    // Allow credentials such as cookies or authorization headers to be sent
+    // Note: When set to true, "*" cannot be used for allowed origins
+    configuration.setAllowCredentials(true);
+
+    // Register the CORS configuration for all endpoints in the application
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+
+    // Return the configured CORS source to be used by Spring Security
+    return source;
+}
 
     // @Bean
     // public AuthenticationManager authenticationManager(){
