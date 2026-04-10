@@ -47,15 +47,15 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long>{
     * adding proper access control.
     */
    
-    // @Query("""
-    // SELECT e 
-    // FROM ExpenseEntity e 
-    // JOIN FETCH e.category 
-    // WHERE e.profile.id = :profileId 
-    // AND e.date = :date
-    // """)
-    // List<ExpenseEntity>findByProfileIdAndDate(
-    //     Long profileId, 
-    //     LocalDate date
-    // );
+    @Query("""
+    SELECT e 
+    FROM ExpenseEntity e 
+    JOIN FETCH e.category 
+    WHERE e.profile.id = :profileId 
+    AND e.date = :date
+    """)
+    List<ExpenseEntity>findByProfileIdAndDate(
+        Long profileId, 
+        LocalDate date
+    );
 }
