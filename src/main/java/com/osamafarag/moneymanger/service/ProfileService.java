@@ -98,7 +98,7 @@ public class ProfileService {
     }
 
     public ProfileDTO getPublicProfile(String email){
-        ProfileEntity currentUser = null;
+        ProfileEntity currentUser;
         if(email == null){
             currentUser = getCurrentProfile();
         }else{
