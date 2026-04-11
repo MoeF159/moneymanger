@@ -54,8 +54,8 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long>{
     // WHERE e.profile.id = :profileId 
     // AND e.date = :date
     // """)
-    // List<ExpenseEntity>findByProfileIdAndDate(
-    //     Long profileId, 
-    //     LocalDate date
-    // );
+    List<ExpenseEntity>findByProfileIdAndDate(
+        Long profileId, 
+        LocalDate date
+    );
 }
