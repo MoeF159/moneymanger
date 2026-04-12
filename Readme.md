@@ -104,7 +104,7 @@ Users can track income, expenses, and account balances while receiving automated
 ### Run Locally
 
 ```bash
-git clone https://github.com/yourusername/money-manager-api.git
+git clone https://github.com/MoeF159/money-manager-api.git
 cd money-manager-api
 ./mvnw spring-boot:run
 ```
