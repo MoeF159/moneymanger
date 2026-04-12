@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final AppUserDetailsService appUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
-    @Value("${MONEY_MANAGER_FRONTEND_URL}")
+    @Value("${money.manager.frontend.url}")
     private String frontendUrl;
 
     @Bean

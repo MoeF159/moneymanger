@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationService{
 
     private final ProfileRepository profileRepository;
-    private final EmailService emailService;
+    private final BrevoEmailService brevoEmailService;
     private final ExpenseService expenseService;
     private static final ZoneId TIMEZONE = ZoneId.of("America/New_York");
 
@@ -47,7 +47,7 @@ public class NotificationService{
                     + "Go to Money Manager</a>"
                     + "</div>"
                     + "<br><br>Best Regards,<br>Money Manager Team";
-                emailService.sendEmail(profile.getEmail(), "Daily reminder: Add your income and expenses!", body);
+                brevoEmailService.sendEmail(profile.getEmail(), "Daily reminder: Add your income and expenses!", body);
             } catch (Exception e) {
                 log.error("Failed to send reminder email to profile {}: {}", profile.getId(), e.getMessage());
             }        }
@@ -76,7 +76,7 @@ public class NotificationService{
                 }
                 table.append("</table>");
                 String body = "Hi "+profile.getFullName()+ ",<br/><br/> Here is a summary of your expenses for today:<br/><br/>"+table+"<br/><br/>Best Regards,<br/>Money Manager Team";
-                emailService.sendEmail(
+                brevoEmailService.sendEmail(
                     profile.getEmail(), 
                     "Your Daily Expense Summary - " + LocalDate.now(TIMEZONE).format(DateTimeFormatter.ofPattern("MMMM d, yyyy")), 
                     body
